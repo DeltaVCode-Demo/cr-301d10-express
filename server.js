@@ -25,6 +25,8 @@ app.get('/shoppingList', (request, response) => {
   response.json(items);
 });
 
+app.get('/photo', getPhotos);
+
 
 // Figure out what PORT to listen on
 const PORT = process.env.PORT || 3001;
@@ -33,3 +35,25 @@ const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Server started: http://localhost:${PORT}`);
 });
+
+// Route Handlers down here
+const axios = require('axios');
+
+async function getPhotos(request, response) {
+  const q = request.query.q; // grab the q query string value
+
+  try {
+    const results = await axios.get('https://api.unsplash.com/photos/', {
+      params: {
+        client_id: process.env.UNSPLASH_ACCESS,
+        query: q,
+      },
+    });
+
+    response.send(results.data);
+  }
+  catch (err) {
+    console.error('axios error!', err);
+    response.status(500).send('oops');
+  }
+}
