@@ -50,10 +50,21 @@ async function getPhotos(request, response) {
       },
     });
 
-    response.send(results.data);
+    let photoArray =
+      results.data.map(photo => new Photo(photo));
+
+    response.send(photoArray);
   }
   catch (err) {
     console.error('axios error!', err);
     response.status(500).send('oops');
+  }
+}
+
+class Photo {
+  constructor(apiObj) {
+    this.img_url = apiObj.urls.regular;
+    this.original_image = apiObj.links.self;
+    this.photographer = apiObj.user.name;
   }
 }
