@@ -25,7 +25,10 @@ app.get('/shoppingList', (request, response) => {
   response.json(items);
 });
 
-app.get('/photo', getPhotos);
+const photos = require('./routes/photos.js');
+// console.log('photos export', photos);
+app.get('/photo', photos.getPhotos);
+app.get('/photos/mine', photos.getMine); // does not exist
 
 
 // Figure out what PORT to listen on
@@ -35,36 +38,3 @@ const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Server started: http://localhost:${PORT}`);
 });
-
-// Route Handlers down here
-const axios = require('axios');
-
-async function getPhotos(request, response) {
-  const q = request.query.q; // grab the q query string value
-
-  try {
-    const results = await axios.get('https://api.unsplash.com/photos/', {
-      params: {
-        client_id: process.env.UNSPLASH_ACCESS,
-        query: q,
-      },
-    });
-
-    let photoArray =
-      results.data.map(photo => new Photo(photo));
-
-    response.send(photoArray);
-  }
-  catch (err) {
-    console.error('axios error!', err);
-    response.status(500).send('oops');
-  }
-}
-
-class Photo {
-  constructor(apiObj) {
-    this.img_url = apiObj.urls.regular;
-    this.original_image = apiObj.links.self;
-    this.photographer = apiObj.user.name;
-  }
-}
