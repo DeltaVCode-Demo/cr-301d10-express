@@ -1,5 +1,6 @@
 // Route Handlers down here
 const axios = require('axios');
+const errorHandler = require('../errorHandler');
 
 // export only the function
 // module.exports = getPhotos;
@@ -31,8 +32,7 @@ async function getPhotos(request, response) {
     response.send(photoArray);
   }
   catch (err) {
-    console.error('axios error!', err);
-    response.status(500).send('oops');
+    errorHandler(err, response);
   }
 }
 
